@@ -1,6 +1,6 @@
 use crate::components::todo::todo_item::TodoItem;
 use crate::components::todo::types::Todo;
-use yew::{function_component, html, Callback, Html, Properties};
+use yew::{function_component, html, Callback, Properties};
 
 #[derive(Properties, PartialEq)]
 pub struct TodoItemProps {

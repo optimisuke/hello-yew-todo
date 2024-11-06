@@ -1,5 +1,5 @@
 // use crate::components::todo::types::Todo;
-use yew::{function_component, html, Callback, MouseEvent, Properties}; // Properties を yew から持ち込む
+use yew::{function_component, html, Callback, Properties}; // Properties を yew から持ち込む
 
 #[derive(Properties, PartialEq)] // Properties, PartialEq を継承した構造体を作成
 pub struct TodoItemProps {
