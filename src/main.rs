@@ -25,12 +25,26 @@ fn app() -> Html {
         })
     };
 
+    // 削除処理のコールバック
+    let on_delete = {
+        let todo_items = todo_items.clone();
+        Callback::from(move |id: usize| {
+            todo_items.set(
+                todo_items
+                    .iter()
+                    .cloned()
+                    .filter(|todo| todo.id != id)
+                    .collect(),
+            );
+        })
+    };
+
     html! {
       <>
         <Header />
         <main class="container-fluid mt-2">
           <TodoForm {on_add} />
-          <TodoList todo_items={(*todo_items).clone()} />
+          <TodoList todo_items={(*todo_items).clone()} on_delete={on_delete} />
         </main>
       </>
     }
