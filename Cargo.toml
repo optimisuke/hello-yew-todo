@@ -7,3 +7,4 @@ edition = "2021"
 yew = "0.19.3"
 log = "0.4.6"
 wasm-logger = "0.2.0"
+dotenvy = "0.15"      # dotenvy クレートを追加
