@@ -16,7 +16,7 @@ fn app() -> Html {
         Callback::from(move |title: String| {
             let mut current_todo_items = (*todo_items).clone();
             current_todo_items.push(Todo {
-                id: *next_id,
+                id: next_id.to_string(),
                 title,
                 completed: false,
             });
@@ -28,7 +28,7 @@ fn app() -> Html {
     // 削除処理のコールバック
     let on_delete = {
         let todo_items = todo_items.clone();
-        Callback::from(move |id: usize| {
+        Callback::from(move |id: String| {
             todo_items.set(
                 todo_items
                     .iter()
