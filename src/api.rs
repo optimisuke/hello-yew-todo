@@ -55,6 +55,34 @@ pub async fn post_todo(title: &str) -> Result<Todo, Box<dyn Error>> {
     Ok(todo)
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct UpdateTodo {
+    pub title: String,
+    pub completed: bool,
+}
+
+pub async fn update_todo(id: &str, title: &str, completed: bool) -> Result<Todo, Box<dyn Error>> {
+    let url = format!("{}/todos/{}", get_api_base_url(), id);
+    let update_data = UpdateTodo {
+        title: title.to_string(),
+        completed,
+    };
+
+    let response = Request::put(&url).json(&update_data)?.send().await?;
+
+    // ステータスコードが成功でない場合はエラーメッセージを返す
+    if !response.ok() {
+        return Err(format!("Failed to update todo: Status {}", response.status()).into());
+    }
+
+    let updated_todo = response
+        .json::<Todo>()
+        .await
+        .map_err(|err| format!("Failed to parse updated todo JSON: {}", err))?;
+
+    Ok(updated_todo)
+}
+
 pub async fn delete_todo(id: String) -> Result<(), Box<dyn Error>> {
     let url = format!("{}/todos/{}", get_api_base_url(), id);
 

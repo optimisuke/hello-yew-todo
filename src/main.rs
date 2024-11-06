@@ -1,4 +1,5 @@
 use crate::api::{delete_todo, fetch_todos, post_todo};
+use api::update_todo;
 use components::header::Header;
 use components::todo::todo_form::TodoForm;
 use components::todo::todo_list::TodoList;
@@ -47,6 +48,30 @@ fn app() -> Html {
         })
     };
 
+    // on_toggle コールバックで completed 状態を更新し、API に送信
+    let on_toggle = {
+        let todos = todo_items.clone();
+        Callback::from(move |id: String| {
+            let todos = todos.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                if let Some(todo) = todos.iter().cloned().find(|todo| todo.id == id) {
+                    let new_completed = !todo.completed;
+                    match update_todo(&id, &todo.title, new_completed).await {
+                        Ok(updated_todo) => {
+                            let mut updated_todos = (*todos).clone();
+                            if let Some(todo) = updated_todos.iter_mut().find(|todo| todo.id == id)
+                            {
+                                todo.completed = updated_todo.completed;
+                            }
+                            todos.set(updated_todos);
+                        }
+                        Err(err) => log::error!("Failed to update todo: {}", err),
+                    }
+                }
+            });
+        })
+    };
+
     let on_delete = {
         let todo_items = todo_items.clone();
         Callback::from(move |id: String| {
@@ -74,7 +99,7 @@ fn app() -> Html {
         <Header />
         <main class="container-fluid mt-2">
           <TodoForm {on_add} />
-          <TodoList todo_items={(*todo_items).clone()} on_delete={on_delete} />
+          <TodoList todo_items={(*todo_items).clone()} on_toggle={on_toggle} on_delete={on_delete} />
         </main>
       </>
     }
